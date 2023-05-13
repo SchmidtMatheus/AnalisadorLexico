@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html>
 <head>
   <title>Analisador Lexico</title>
   <link rel="stylesheet" type="text/css" href="style.css">
@@ -7,7 +8,6 @@
   <h1>Analisador Lexico</h1>
   <label for="file-input" id="file-label">Escolher .txt para análise</label>
   <input type="file" id="file-input">
-  <button id="compile-button">Compilar</button>
   
   <div class="container">
     <div id="output-container">
@@ -18,8 +18,12 @@
       <h2>Lista de Lexemas</h2>
       <ul id="lexemas"></ul>
     </div>
+    <div id="file-content-container">
+      <h2>Texto do Arquivo</h2>
+      <pre id="file-content"></pre>
+    </div>
   </div>
 
   <script src="./main.js"></script>
 </body>
-
+</html>
