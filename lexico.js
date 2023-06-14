@@ -61,6 +61,7 @@ const TOKENS = [
 const identifiedTokens = [];
 
 function readFile(file) {
+  identifiedTokens.length = 0;
   const reader = new FileReader();
   reader.onload = function (event) {
     const content = event.target.result;
@@ -93,15 +94,15 @@ function tokenize(code) {
       let matchedToken = null;
 
       for (let j = 0; j < TOKENS.length; j++) {
-        const [, tokenName, tokenValue] = TOKENS[j];
+        const [tokenID, tokenName, tokenValue] = TOKENS[j];
         if (remainingCode.startsWith(tokenValue)) {
-          matchedToken = { position, name: tokenName, value: tokenValue };
+          matchedToken = { tokenID, name: tokenName, value: tokenValue };
           break;
         }
       }
 
       if (matchedToken) {
-        const { name, value } = matchedToken;
+        const { tokenID, name, value } = matchedToken;
         const token = {
           position,
           name,
@@ -110,18 +111,18 @@ function tokenize(code) {
         };
         tokens.push(token);
         lexemas.push(value);
-        identifiedTokens.push(position);
+        identifiedTokens.push(tokenID);
         remainingCode = remainingCode.slice(value.length);
         position += value.length;
       } else {
         let delimiterFound = false;
 
         for (let j = 0; j < TOKENS.length; j++) {
-          const [, tokenName, tokenValue] = TOKENS[j];
+          const [tokenID, tokenName, tokenValue] = TOKENS[j];
           if (remainingCode.startsWith(tokenValue[0])) {
             const nextToken = getNextToken(remainingCode, TOKENS.slice(j));
             if (nextToken) {
-              matchedToken = { position, name: tokenName, value: nextToken };
+              matchedToken = { tokenID, name: tokenName, value: nextToken };
               delimiterFound = true;
               break;
             }
@@ -131,7 +132,7 @@ function tokenize(code) {
         if (delimiterFound) {
           const { name, value } = matchedToken;
           const token = {
-            position,
+            tokenID,
             name,
             value,
             line: lineNumber,
@@ -139,7 +140,7 @@ function tokenize(code) {
           tokens.push(token);
           lexemas.push(value);
           remainingCode = remainingCode.slice(value.length);
-          position += value.length;
+          tokenID += value.length;
         } else {
           const nextChar = remainingCode[0];
           if (nextChar.match(/\s/)) {
