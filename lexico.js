@@ -178,8 +178,6 @@ function getNextToken(remainingCode, tokenList) {
   return null;
 }
 
-
-
 function getTokenPosition(value) {
   for (let i = 0; i < TOKENS.length; i++) {
     if (TOKENS[i][2] === value) {
@@ -252,3 +250,59 @@ fileInput.addEventListener("change", function (event) {
   const file = event.target.files[0];
   readFile(file);
 });
+
+
+
+
+
+
+
+//entrada, geralmente vem de um arquivo texto
+var palavra = 'void main {inicio ; fim }';
+
+//variável para armazenar o lexema
+var lexema = '';
+
+//variável para armazenar a lista de tokens (que irá alimentar o sintático)
+var tokens = [];
+var lexemas = [];
+
+for (var i = 0; i < palavra.length; i++) { // percorre a entrada
+  if (palavra[i] === '') {
+    lexema = palavra[i];
+  } else if (palavra[i] !== ' ') { // se não for espaço... aqui tem que colocar 
+    // outros caracteres como pontuação e parentização
+    lexema = lexema + palavra[i]
+  } else {
+    lexema = '';
+  }
+  
+  console.log(lexema); // print opcional para ver o andamento
+  
+  if (lexema === 'void') { // classifica o lexema em token conforme a gramática
+    tokens.push(2); // obrigatório salvar o código do token
+    lexemas.push(lexema); // opcional salvar, pode somente mostrar
+  } else if (lexema == 'main') {
+    tokens.push(11);
+    lexemas.push(lexema);
+  } else if (lexema == '}') {
+    tokens.push(38);
+    lexemas.push(lexema);
+  } else if (lexema == '{') {
+    tokens.push(39);
+    lexemas.push(lexema);
+    lexema = '';
+  } else if (lexema == 'inicio') {
+    tokens.push(15);
+    lexemas.push(lexema);
+  } else if (lexema == 'fim') {
+    tokens.push(20);
+    lexemas.push(lexema);
+  } else if (lexema == ';') {
+    tokens.push(40);
+    lexemas.push(lexema);
+  }
+}
+
+//salvar do léxico para entregar para o sintático
+var tokensArray = Array.from(tokens); //converte array do JavaScript para array do tipo Array
