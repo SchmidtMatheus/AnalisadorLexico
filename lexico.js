@@ -1,62 +1,59 @@
 const TOKENS = [
-  [1, "WRITE", "write"],
-  [2, "WHILE", "while"],
-  [3, "VARIABLE", "variavel"],
-  [4, "UNTIL", "until"],
-  [5, "TO", "to"],
-  [6, "THEN", "then"],
-  [7, "STRING", "string"],
-  [8, "REPEAT", "repeat"],
-  [9, "REAL", "real"],
-  [10, "READ", "read"],
-  [11, "PROGRAM", "program"],
-  [12, "PROCEDURE", "procedure"],
-  [13, "OR", "or"],
-  [14, "OF", "of"],
-  [15, "NOME_PROCEDURE", "nomeprocedure"],
-  [16, "LITERAL", "literal"],
-  [17, "INTEGER", "integer"],
-  [18, "IF", "if"],
-  [19, "Î", "î"],
-  [20, "FOR", "for"],
-  [21, "END", "end"],
-  [22, "ELSE", "else"],
-  [23, "DO", "do"],
-  [24, "DECLARA_VARIAVEIS", "declaravariaveis"],
-  [25, "CONST", "const"],
-  [26, "CHAR", "char"],
-  [27, "CHAMA_PROCEDURE", "chamaprocedure"],
-  [28, "BEGIN", "begin"],
-  [29, "ARRAY", "array"],
-  [30, "AND", "and"],
-  [31, "GREATER_EQUAL", ">="],
-  [32, "GREATER", ">"],
-  [33, "EQUAL", "="],
-  [34, "NOT_EQUAL", "<>"],
-  [35, "LESS_EQUAL", "<="],
-  [36, "LESS", "<"],
-  [37, "ADD", "+"],
-  [38, "REAL_NUMBER", "_numreal"],
-  [39, "INTEGER_NUMBER", "_numinteiro"],
-  [40, "VARIABLE_NAME", "_nomevariavel"],
-  [41, "STRING_NAME", "_nomestring"],
-  [42, "PROGRAM_NAME", "_nomeprograma"],
-  [43, "PROCEDURE_NAME", "_nomeprocedure"],
-  [44, "CHAR_NAME", "_nomechar"],
-  [45, "RBRACKET", "]"],
-  [46, "LBRACKET", "["],
-  [47, "SEMICOLON", ";"],
-  [48, "COLON", ":"],
-  [49, "SLASH", "/"],
-  [50, "RANGE", ".."],
-  [51, "DOT", "."],
-  [52, "COMMA", ","],
-  [53, "MULTIPLY", "*"],
-  [54, "RPAREN", ")"],
-  [55, "LPAREN", "("],
-  [56, "DOLLAR", "$"],
-  [57, "SUBTRACT", "-"],
+  [0, "write"],
+  [1, "while"],
+  [2, "until"],
+  [3, "to"],
+  [4, "then"],
+  [5, "string"],
+  [6, "repeat"],
+  [7, "real"],
+  [8, "read"],
+  [9, "program"],
+  [10, "procedure"],
+  [11, "or"],
+  [12, "of"],
+  [13, "literal"],
+  [14, "integer"],
+  [15, "if"],
+  [16, "identificador"],
+  [17, "î"],
+  [18, "for"],
+  [19, "end"],
+  [20, "else"],
+  [21, "do"],
+  [22, "declaravariaveis"],
+  [23, "const"],
+  [24, "char"],
+  [25, "chamaprocedure"],
+  [26, "begin"],
+  [27, "array"],
+  [28, "and"],
+  [29, ">="],
+  [30, ">"],
+  [31, "="],
+  [32, "<>"],
+  [33, "<="],
+  [34, "<"],
+  [35, "+"],
+  [36, "numreal"],
+  [37, "numinteiro"],
+  [38, "nomestring"],
+  [39, "nomechar"],
+  [40, "]"],
+  [41, "["],
+  [42, ";"],
+  [43, ":"],
+  [44, "/"],
+  [45, ".."],
+  [46, "."],
+  [47, ","],
+  [48, "*"],
+  [49, ")"],
+  [50, "("],
+  [51, "$"],
+  [52, "-"]
 ];
+
 
 const identifiedTokens = [];
 
@@ -94,18 +91,17 @@ function tokenize(code) {
       let matchedToken = null;
 
       for (let j = 0; j < TOKENS.length; j++) {
-        const [tokenID, tokenName, tokenValue] = TOKENS[j];
+        const [tokenID, tokenValue] = TOKENS[j];
         if (remainingCode.startsWith(tokenValue)) {
-          matchedToken = { tokenID, name: tokenName, value: tokenValue };
+          matchedToken = { tokenID, value: tokenValue };
           break;
         }
       }
 
       if (matchedToken) {
-        const { tokenID, name, value } = matchedToken;
+        const { tokenID, value } = matchedToken;
         const token = {
           position,
-          name,
           value,
           line: lineNumber,
         };
@@ -118,11 +114,11 @@ function tokenize(code) {
         let delimiterFound = false;
 
         for (let j = 0; j < TOKENS.length; j++) {
-          const [tokenID, tokenName, tokenValue] = TOKENS[j];
+          const [tokenID, tokenValue] = TOKENS[j];
           if (remainingCode.startsWith(tokenValue[0])) {
             const nextToken = getNextToken(remainingCode, TOKENS.slice(j));
             if (nextToken) {
-              matchedToken = { tokenID, name: tokenName, value: nextToken };
+              matchedToken = { tokenID, value: nextToken };
               delimiterFound = true;
               break;
             }
@@ -130,10 +126,9 @@ function tokenize(code) {
         }
 
         if (delimiterFound) {
-          const { name, value } = matchedToken;
+          const { tokenID, value } = matchedToken;
           const token = {
             tokenID,
-            name,
             value,
             line: lineNumber,
           };
@@ -150,9 +145,7 @@ function tokenize(code) {
             const invalidTokenMatch = remainingCode.match(/^\S+/);
             const invalidToken = invalidTokenMatch ? invalidTokenMatch[0] : "";
             const token = {
-              position,
-              name: "INVALID",
-              value: invalidToken,
+              value: "INVALID",
               line: lineNumber,
             };
             tokens.push(token);
@@ -170,7 +163,7 @@ function tokenize(code) {
 
 function getNextToken(remainingCode, tokenList) {
   for (let i = 0; i < tokenList.length; i++) {
-    const [, , tokenValue] = tokenList[i];
+    const [tokenValue] = tokenList[i];
     if (remainingCode.startsWith(tokenValue)) {
       return tokenValue;
     }
@@ -219,10 +212,10 @@ function displayTokens(tokens) {
   const outputElement = document.getElementById("output");
   outputElement.innerHTML = "";
 
-  for (const { name, value, line } of tokens) {
-    if (name !== "INVALID") {
+  for (const { value, line } of tokens) {
+    if (value !== "INVALID") {
       const tokenElement = document.createElement("p");
-      tokenElement.textContent = `Token: (${name}, ${value}) - Linha: ${line}`;
+      tokenElement.textContent = `Token: ${value} - Linha: ${line}`;
       outputElement.appendChild(tokenElement);
     }
   }
@@ -250,59 +243,3 @@ fileInput.addEventListener("change", function (event) {
   const file = event.target.files[0];
   readFile(file);
 });
-
-
-
-
-
-
-
-//entrada, geralmente vem de um arquivo texto
-var palavra = 'void main {inicio ; fim }';
-
-//variável para armazenar o lexema
-var lexema = '';
-
-//variável para armazenar a lista de tokens (que irá alimentar o sintático)
-var tokens = [];
-var lexemas = [];
-
-for (var i = 0; i < palavra.length; i++) { // percorre a entrada
-  if (palavra[i] === '') {
-    lexema = palavra[i];
-  } else if (palavra[i] !== ' ') { // se não for espaço... aqui tem que colocar 
-    // outros caracteres como pontuação e parentização
-    lexema = lexema + palavra[i]
-  } else {
-    lexema = '';
-  }
-  
-  console.log(lexema); // print opcional para ver o andamento
-  
-  if (lexema === 'void') { // classifica o lexema em token conforme a gramática
-    tokens.push(2); // obrigatório salvar o código do token
-    lexemas.push(lexema); // opcional salvar, pode somente mostrar
-  } else if (lexema == 'main') {
-    tokens.push(11);
-    lexemas.push(lexema);
-  } else if (lexema == '}') {
-    tokens.push(38);
-    lexemas.push(lexema);
-  } else if (lexema == '{') {
-    tokens.push(39);
-    lexemas.push(lexema);
-    lexema = '';
-  } else if (lexema == 'inicio') {
-    tokens.push(15);
-    lexemas.push(lexema);
-  } else if (lexema == 'fim') {
-    tokens.push(20);
-    lexemas.push(lexema);
-  } else if (lexema == ';') {
-    tokens.push(40);
-    lexemas.push(lexema);
-  }
-}
-
-//salvar do léxico para entregar para o sintático
-var tokensArray = Array.from(tokens); //converte array do JavaScript para array do tipo Array
