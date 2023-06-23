@@ -158,6 +158,7 @@ function tokenize(code) {
     }
   }
   console.log(identifiedTokens);
+  toAnalyze(identifiedTokens);
   return { tokens, lexemas };
 }
 
