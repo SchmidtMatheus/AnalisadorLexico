@@ -56,7 +56,8 @@ function readFile(file) {
     const words = splitWords(content);
     const compare = compareWordsWithTokens(words, TOKENS);
     // Now 'content' contains the text from the file.
-    console.log(compare); // You can manipulate 'content' as needed.
+    console.log(compare);
+    console.log(words); // You can manipulate 'content' as needed.
   };
 }
 
