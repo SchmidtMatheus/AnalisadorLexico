@@ -68,12 +68,14 @@ fileInput.addEventListener("change", function (event) {
 });
 // leitura dos arquivos
 
-// Dividir o conteúdo em palavras usando o espaço como separador
+// Dividir o conteúdo em palavras usando uma expressao regular como separador
 function splitWords(content) {
-  const words = content.split(' ');
+  const separator = [' ', ';','-','{','}','(',')','.',',','*','/','>','<'];
+  const separatorRegex = new RegExp('[' + separator.join('') + ']', 'g');
+  const words = content.split(separatorRegex);
   return words;
 }
-// Dividir o conteúdo em palavras usando o espaço como separador
+// Dividir o conteúdo em palavras usando uma expressao regular como separador
 
 
 function compareWordsWithTokens(WORDS, TOKENS) {
