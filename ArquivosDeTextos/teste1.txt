@@ -1,0 +1,13 @@
+#include<stdio.h>
+#include<string.h> 
+
+int main() { 
+char text[] = "Este; é, um: exemplo de, texto com separadores. Eles devem ser preservados!"; 
+// Use strtok para dividir o texto em palavras e preservar os separadores
+char *token = strtok(text, " ;,.:"); 
+while (token != NULL) { 
+printf("Token: %s\n", token); 
+token = strtok(NULL, " ;,.:"); 
+} 
+return 0; 
+} 

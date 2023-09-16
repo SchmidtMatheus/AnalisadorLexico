@@ -27,7 +27,7 @@ const TOKENS = [
   [26, "="],
   [27, "<>"],
   [28, "<="],
-  [29, ">"],
+  [29, "<"],
   [30, "+"],
   [31, ";"],
   [32, ":="],
@@ -56,8 +56,8 @@ function readFile(file) {
     const words = splitWords(content);
     const compare = compareWordsWithTokens(words, TOKENS);
     // Now 'content' contains the text from the file.
-    console.log(compare);
-    console.log(words); // You can manipulate 'content' as needed.
+    displayTokens(compare);
+    displayFileContent(words); // You can manipulate 'content' as needed.
   };
 }
 
@@ -70,9 +70,12 @@ fileInput.addEventListener("change", function (event) {
 
 // Dividir o conteúdo em palavras usando uma expressao regular como separador
 function splitWords(content) {
-  const separator = [' ', ';','-','{','}','(',')','.',',','*','/','>','<'];
-  const separatorRegex = new RegExp('[' + separator.join('') + ']', 'g');
-  const words = content.split(separatorRegex);
+  const separatorRegex = /([;{}()\.,*\/><:\s]+)/;
+  const wordsWithSeparators = content.split(separatorRegex);
+
+  // Filtrar os tokens vazios resultantes da divisão
+  const words = wordsWithSeparators.filter(word => word.trim() !== '');
+  console.log(words)
   return words;
 }
 // Dividir o conteúdo em palavras usando uma expressao regular como separador
@@ -80,6 +83,8 @@ function splitWords(content) {
 
 function compareWordsWithTokens(WORDS, TOKENS) {
   const pilhaTokens = [];
+  let linhaAtual = 1; 
+  let tokensComLinhas = [];
 
   for (let i = 0; i < WORDS.length; i++) {
     const wordToSearch = WORDS[i];
@@ -87,42 +92,39 @@ function compareWordsWithTokens(WORDS, TOKENS) {
       const token = TOKENS[j][1]; // Obtenha a palavra do token em TOKENS
       if (wordToSearch === token) {
         pilhaTokens.push(TOKENS[j][0]); // Armazene a posição do token em pilhaTokens
+        tokensComLinhas.push({ token: TOKENS[j][0], linha: linhaAtual });
         break; // Saia do loop interno assim que encontrar uma correspondência
       }
     }
-  }
-
-  return pilhaTokens
-}
-
-/*
-function displayTokens(tokens) {
-  const outputElement = document.getElementById("output");
-  outputElement.innerHTML = "";
-
-  for (const { value, line } of tokens) {
-    if (value !== "INVALID") {
-      const tokenElement = document.createElement("p");
-      tokenElement.textContent = `Token: ${value} - Linha: ${line}`;
-      outputElement.appendChild(tokenElement);
+    
+    if (wordToSearch.includes("\r\n")) {
+      linhaAtual++;
+      WORDS[i] = wordToSearch.replace(/\r\n/g, '');
     }
   }
+
+  return tokensComLinhas
 }
 
-
-function displayLexemas(lexemas) {
-  const lexemasElement = document.getElementById("lexemas");
-  lexemasElement.innerHTML = "";
-
-  for (const lexema of lexemas) {
-    const lexemaElement = document.createElement("li");
-    lexemaElement.textContent = lexema;
-    lexemasElement.appendChild(lexemaElement);
-  }
-}
-
-function displayFileContent(content) {
+function displayFileContent(words) {
   const fileContentElement = document.getElementById("file-content");
-  fileContentElement.textContent = content;
+  fileContentElement.innerHTML = words.join("<br>");
+  fileContentDiv.style.whiteSpace = "pre-wrap";       
 }
-*/
+
+
+function displayTokens(tokens) {
+  const tokensDiv = document.getElementById("tokens");
+  tokensDiv.innerHTML = '';
+
+
+  tokens.forEach(item => {
+    const listItem = document.createElement('p');
+    listItem.textContent = `${item.token} - Linha ${item.linha}`;
+    tokensDiv.appendChild(listItem);
+  });
+
+  // Definir a propriedade CSS 'white-space' para 'pre-wrap'
+  tokensDiv.style.whiteSpace = "pre-wrap";
+};
+
