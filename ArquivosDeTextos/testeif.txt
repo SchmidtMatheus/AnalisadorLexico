@@ -1,0 +1,15 @@
+program funcao;
+//aqui comeca o programa
+
+numero=nint;
+numeroo=nint;
+const numero=10;
+const numeroo=15;
+
+if numero>numeroo
+	begin
+		print{'e maior'}
+	end else
+		print{'e menor'}
+
+end;

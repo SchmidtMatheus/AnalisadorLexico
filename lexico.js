@@ -70,7 +70,7 @@ fileInput.addEventListener("change", function (event) {
 
 // Dividir o conteúdo em palavras usando uma expressao regular como separador
 function splitWords(content) {
-  const separatorRegex = /([;{}()\.,*\/><:\s]+)/;
+  const separatorRegex = /([;{}()\.,*\/><:\s"']+)/g; 
   const wordsWithSeparators = content.split(separatorRegex);
 
   // Filtrar os tokens vazios resultantes da divisão
@@ -83,7 +83,7 @@ function splitWords(content) {
 
 function compareWordsWithTokens(WORDS, TOKENS) {
   const pilhaTokens = [];
-  let linhaAtual = 1; 
+  let linhaAtual = 1;
   let tokensComLinhas = [];
 
   for (let i = 0; i < WORDS.length; i++) {
@@ -92,24 +92,38 @@ function compareWordsWithTokens(WORDS, TOKENS) {
       const token = TOKENS[j][1]; // Obtenha a palavra do token em TOKENS
       if (wordToSearch === token) {
         pilhaTokens.push(TOKENS[j][0]); // Armazene a posição do token em pilhaTokens
-        tokensComLinhas.push({ token: TOKENS[j][0], linha: linhaAtual });
+        tokensComLinhas.push({
+          token: TOKENS[j][0],
+          linha: linhaAtual,
+          wordToSearch: wordToSearch,
+        });
         break; // Saia do loop interno assim que encontrar uma correspondência
       }
     }
-    
+
     if (wordToSearch.includes("\r\n")) {
       linhaAtual++;
       WORDS[i] = wordToSearch.replace(/\r\n/g, '');
-    }
+    } else if (!TOKENS.some((token) => token[1] === wordToSearch)) {
+        pilhaTokens.push(16);
+        tokensComLinhas.push({
+          token: 16,
+          linha: linhaAtual,
+          wordToSearch: wordToSearch,
+        });
+      }
+    
   }
 
   return tokensComLinhas
 }
 
+
+
+
 function displayFileContent(words) {
   const fileContentElement = document.getElementById("file-content");
-  fileContentElement.innerHTML = words.join("<br>");
-  fileContentDiv.style.whiteSpace = "pre-wrap";       
+  fileContentElement.innerHTML = words.join("<br>");      
 }
 
 
@@ -120,11 +134,9 @@ function displayTokens(tokens) {
 
   tokens.forEach(item => {
     const listItem = document.createElement('p');
-    listItem.textContent = `${item.token} - Linha ${item.linha}`;
+    listItem.textContent = `Token: ${item.token} - Linha: ${item.linha} - Lexema: ${item.wordToSearch}`;
     tokensDiv.appendChild(listItem);
   });
-
-  // Definir a propriedade CSS 'white-space' para 'pre-wrap'
-  tokensDiv.style.whiteSpace = "pre-wrap";
 };
+
 
