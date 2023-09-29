@@ -1,12 +1,12 @@
 program funcao;
 //aqui comeca o programa
 
-numero=nint;
-numeroo=nint;
-const numero=10;
-const numeroo=15;
+numero = nint;
+numeroo = nint;
+const numero = 10;
+const numeroo = 15;
 
-for (a=0;a<b;a++) 
+for (a = 0;a < b;a++) 
 	begin
 		numero > numeroo;
 	end; 

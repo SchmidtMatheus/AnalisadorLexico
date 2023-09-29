@@ -52,12 +52,23 @@ function readFile(file) {
   const reader = new FileReader();
   reader.readAsText(file);
   reader.onload = function (event) {
-    const content = event.target.result;
-    const words = splitWords(content);
-    const compare = compareWordsWithTokens(words, TOKENS);
-    // Now 'content' contains the text from the file.
-    displayTokens(compare);
+    const words = splitWords(event.target.result);
+    const matriz = [];
+    let linhaAtual = 1;
+    
+    words.forEach(word => {
+      if (word.includes("\r\n")) {
+        matriz.push(words.slice(linhaAtual, words.indexOf(word)));
+        linhaAtual = words.indexOf(word) + 1;
+      } else {
+        matriz[linhaAtual] = matriz[linhaAtual] || [];
+        matriz[linhaAtual].push(word);
+      }
+    });
+    // Now 'matriz' contains the text from the file, separated by lines.
+    displayTokens(compareWordsWithTokens(matriz, TOKENS));
     displayFileContent(words); // You can manipulate 'content' as needed.
+    console.log(matriz)
   };
 }
 
@@ -76,6 +87,7 @@ function splitWords(content) {
   // Filtrar os tokens vazios resultantes da divisão
   const words = wordsWithSeparators.filter(word => word.trim() !== '');
   console.log(words)
+  
   return words;
 }
 // Dividir o conteúdo em palavras usando uma expressao regular como separador
@@ -83,7 +95,6 @@ function splitWords(content) {
 
 function compareWordsWithTokens(WORDS, TOKENS) {
   const pilhaTokens = [];
-  let linhaAtual = 1;
   let tokensComLinhas = [];
 
   for (let i = 0; i < WORDS.length; i++) {
@@ -94,27 +105,21 @@ function compareWordsWithTokens(WORDS, TOKENS) {
         pilhaTokens.push(TOKENS[j][0]); // Armazene a posição do token em pilhaTokens
         tokensComLinhas.push({
           token: TOKENS[j][0],
-          linha: linhaAtual,
+          linha: WORDS.indexOf(wordToSearch),
           wordToSearch: wordToSearch,
         });
         break; // Saia do loop interno assim que encontrar uma correspondência
       }
     }
-
-    if (wordToSearch.includes("\r\n")) {
-      linhaAtual++;
-      WORDS[i] = wordToSearch.replace(/\r\n/g, '');
-    } else if (!TOKENS.some((token) => token[1] === wordToSearch)) {
+    if (!TOKENS.some((token) => token[1] === wordToSearch)) {
         pilhaTokens.push(16);
         tokensComLinhas.push({
           token: 16,
-          linha: linhaAtual,
+          linha: WORDS.indexOf(wordToSearch),
           wordToSearch: wordToSearch,
         });
       }
-    
   }
-
   return tokensComLinhas
 }
 
@@ -137,6 +142,4 @@ function displayTokens(tokens) {
     listItem.textContent = `Token: ${item.token} - Linha: ${item.linha} - Lexema: ${item.wordToSearch}`;
     tokensDiv.appendChild(listItem);
   });
-};
-
-
+}
