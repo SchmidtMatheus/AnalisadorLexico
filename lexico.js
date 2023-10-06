@@ -70,7 +70,7 @@ fileInput.addEventListener("change", function (event) {
 
 // Dividir o conteúdo em palavras usando uma expressao regular como separador
 function splitWords(content) {
-  const separatorRegex = /([;{}()\.,*\/><:\s"']+)/g; 
+  const separatorRegex = /([{}()\[\].,*\/><:\s"']+|'(?:[^'\\]|\\.)*'|\{\}|\})/g;
   const wordsWithSeparators = content.split(separatorRegex);
 
   // Filtrar os tokens vazios resultantes da divisão
@@ -101,9 +101,16 @@ function compareWordsWithTokens(WORDS, TOKENS) {
       }
     }
 
-    if (wordToSearch.includes("\r\n")) {
+    if (wordToSearch.includes("\n\n")) {
       linhaAtual++;
-      WORDS[i] = wordToSearch.replace(/\r\n/g, '');
+      WORDS[i] = wordToSearch.replace(/\n\n/g, '');
+    }
+    if (wordToSearch.includes("\n")) {
+      linhaAtual++;
+      WORDS[i] = wordToSearch.replace(/\n/g, '');
+    }
+    if (wordToSearch.includes("\t")) {
+      WORDS[i] = wordToSearch.replace(/\t/g, '');
     } else if (!TOKENS.some((token) => token[1] === wordToSearch)) {
         pilhaTokens.push(16);
         tokensComLinhas.push({
