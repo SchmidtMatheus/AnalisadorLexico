@@ -70,7 +70,7 @@ fileInput.addEventListener("change", function (event) {
 
 // Dividir o conteúdo em palavras usando uma expressao regular como separador
 function splitWords(content) {
-  const separatorRegex = /([{}()\[\].,*\/><:\s"']+|'(?:[^'\\]|\\.)*'|\{\}|\})/g;
+  const separatorRegex = /(;|\+|-|\*|\/|\[|\]|\{|\}|\\|"|<|>'|'|\(|\)|=|\s)/g;
   const wordsWithSeparators = content.split(separatorRegex);
 
   // Filtrar os tokens vazios resultantes da divisão

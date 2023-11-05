@@ -1,16 +1,16 @@
 program funcao
 //aqui comeca o programa
 
-numero = nint;
-numeroo = nint;
-palavr = nstring;
-const numero = 10;
-const numeroo = 10;
-const palavra = mesmo;
+numero = nint ;
+numeroo = nint ;
+palavr = nstring ;
+const numero = 10 ;
+const numeroo = 10 ;
+const palavra = mesmo ;
 
 while ( numero = numeroo )
 do {
-write( "o numero sera", palavra );
-};
+write( " o numero sera ", palavra ) ;
+} ;
 
-end;
+end ;
