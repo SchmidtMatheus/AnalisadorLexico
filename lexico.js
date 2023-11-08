@@ -70,7 +70,8 @@ fileInput.addEventListener("change", function (event) {
 
 // Dividir o conteúdo em palavras usando uma expressao regular como separador
 function splitWords(content) {
-  const separatorRegex = /(;|\+|-|\*|\/|\[|\]|\{|\}|\\|"|<|>|'|'|\(|\)|=|\s|\n(?!\s))/g;
+  const separatorRegex = /(;|\+|-|\*|\/|\[|\]|\{|\}|\\|"|<|>|'|'|\(|\)|=|\s)/g;
+
   const wordsWithSeparators = content.split(separatorRegex);
 
   // Filtrar os tokens vazios resultantes da divisão
@@ -88,24 +89,23 @@ function compareWordsWithTokens(WORDS, TOKENS) {
   let previousToken = null;
 
   for (let i = 0; i < WORDS.length; i++) {
-    const wordToSearch = WORDS[i];
-
-    if (wordToSearch.includes("\n\n")) {
-      linhaAtual++;
-      WORDS[i] = wordToSearch.replace(/\n\n/g, ' ');
-    }
-
-    if (wordToSearch.includes("\n")) {
-      linhaAtual++;
-      WORDS[i] = wordToSearch.replace(/\n/g, ' ');
-    }
-
-    if (wordToSearch.includes("\t")) {
-      WORDS[i] = wordToSearch.replace(/\t/g, ' ');
-    }
-
     const word = WORDS[i];
     let foundToken = false;
+
+    /*
+    if (word.includes("\n\n")) {
+      linhaAtual++;
+      WORDS[i] = word.replace(/\n\n/g, ' ');
+    }
+
+    if (word.includes("\n")) {
+      linhaAtual++;
+      WORDS[i] = word.replace(/\n/g, ' ');
+    }
+
+    if (word.includes("\t")) {
+      WORDS[i] = word.replace(/\t/g, ' ');
+    } */
 
     for (let j = 0; j < TOKENS.length; j++) {
       const token = TOKENS[j][1];
@@ -115,8 +115,12 @@ function compareWordsWithTokens(WORDS, TOKENS) {
         tokensComLinhas.push({
           token: TOKENS[j][0],
           linha: linhaAtual,
-          wordToSearch: wordToSearch,
+          wordToSearch: word,
         });
+
+        if (word.includes(";")){
+          linhaAtual++;
+        }
 
         if (previousToken === 25 && TOKENS[j][0] === 29) {
           pilhaTokens.pop(); // Remove o último token adicionado (número 29)
@@ -173,7 +177,7 @@ function compareWordsWithTokens(WORDS, TOKENS) {
       tokensComLinhas.push({
         token: 16,
         linha: linhaAtual,
-        wordToSearch: wordToSearch,
+        wordToSearch: word,
       });
       previousToken = 16;
     }
