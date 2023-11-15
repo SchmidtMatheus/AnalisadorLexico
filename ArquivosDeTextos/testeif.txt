@@ -5,6 +5,14 @@ numero = nint ;
 numeroo = nint ;
 const numero = 10 ;
 const numeroo = 15 ;
+/*
+
+teste de bloco; vamos ver (mudar o manuallll)
+<>
+>=
+<=
+:=
+/
 
 if numero > numeroo
 	begin
@@ -13,3 +21,4 @@ if numero > numeroo
 		print{'e menor'}
 
 end ;
+

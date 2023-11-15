@@ -76,7 +76,6 @@ function splitWords(content) {
 
   // Filtrar os tokens vazios resultantes da divisão
   const words = wordsWithSeparators.filter(word => word.trim() !== '');
-  console.log(words)
   return words;
 }
 // Dividir o conteúdo em palavras usando uma expressao regular como separador
@@ -87,25 +86,28 @@ function compareWordsWithTokens(WORDS, TOKENS) {
   let linhaAtual = 1;
   let tokensComLinhas = [];
   let previousToken = null;
+  let ignorarLinha = false;
+  let ignorarBloco = false;
 
   for (let i = 0; i < WORDS.length; i++) {
     const word = WORDS[i];
     let foundToken = false;
 
-    /*
-    if (word.includes("\n\n")) {
-      linhaAtual++;
-      WORDS[i] = word.replace(/\n\n/g, ' ');
-    }
+    if (ignorarLinha || ignorarBloco) {
+      if (word.includes(";")) {
+        linhaAtual++;
+      }
 
-    if (word.includes("\n")) {
-      linhaAtual++;
-      WORDS[i] = word.replace(/\n/g, ' ');
-    }
+      if (ignorarLinha && word.includes(";")) {
+        ignorarLinha = false; // Quando encontrar o ponto e vírgula, desativa a flag
+      }
 
-    if (word.includes("\t")) {
-      WORDS[i] = word.replace(/\t/g, ' ');
-    } */
+      if (ignorarBloco && word.includes("/")) {
+        ignorarBloco = false; // Quando encontrar o fechamento do bloco de comentário, desativa a flag
+      }
+
+      continue; // Ignora o restante da linha ou bloco
+    }
 
     for (let j = 0; j < TOKENS.length; j++) {
       const token = TOKENS[j][1];
@@ -118,14 +120,16 @@ function compareWordsWithTokens(WORDS, TOKENS) {
           wordToSearch: word,
         });
 
-        if (word.includes(";")){
+        if (word.includes(";")) {
           linhaAtual++;
         }
 
-        if (previousToken === 25 && TOKENS[j][0] === 29) {
+        if (previousToken === 29 && TOKENS[j][0] === 25) {
           pilhaTokens.pop(); // Remove o último token adicionado (número 29)
+          pilhaTokens.pop();
           pilhaTokens.push(27); // Adiciona o token 27 (representando <>)
           tokensComLinhas.pop(); // Remove o último item adicionado
+          tokensComLinhas.pop();
           tokensComLinhas.push({
             token: 27,
             linha: linhaAtual,
@@ -135,8 +139,10 @@ function compareWordsWithTokens(WORDS, TOKENS) {
 
         if (previousToken === 25 && TOKENS[j][0] === 26) {
           pilhaTokens.pop(); // Remove o último token adicionado (número 26)
+          pilhaTokens.pop();
           pilhaTokens.push(24); // Adiciona o token 24 (representando >=)
           tokensComLinhas.pop(); // Remove o último item adicionado
+          tokensComLinhas.pop();
           tokensComLinhas.push({
             token: 24,
             linha: linhaAtual,
@@ -146,8 +152,10 @@ function compareWordsWithTokens(WORDS, TOKENS) {
 
         if (previousToken === 29 && TOKENS[j][0] === 26) {
           pilhaTokens.pop(); // Remove o último token adicionado (número 26)
+          pilhaTokens.pop();
           pilhaTokens.push(28); // Adiciona o token 24 (representando <=)
           tokensComLinhas.pop(); // Remove o último item adicionado
+          tokensComLinhas.pop();
           tokensComLinhas.push({
             token: 28,
             linha: linhaAtual,
@@ -157,13 +165,30 @@ function compareWordsWithTokens(WORDS, TOKENS) {
 
         if (previousToken === 33 && TOKENS[j][0] === 26) {
           pilhaTokens.pop(); // Remove o último token adicionado (número 26)
+          pilhaTokens.pop();
           pilhaTokens.push(32); // Adiciona o token 24 (representando :=)
           tokensComLinhas.pop(); // Remove o último item adicionado
+          tokensComLinhas.pop();
           tokensComLinhas.push({
             token: 32,
             linha: linhaAtual,
             wordToSearch: ":="
           });
+        }
+
+        if (TOKENS[j][0] === 34) {
+          const nextWord = WORDS[i + 1];
+          if (nextWord === '/') {
+            ignorarLinha = true; // Ativa a flag para ignorar a linha
+            pilhaTokens.pop(); // Remove o último token adicionado (número 34)
+            tokensComLinhas.pop(); // Remove o último item adicionado
+            break;
+          } else if (nextWord === '*') {
+            ignorarBloco = true; // Ativa a flag para ignorar o bloco
+            pilhaTokens.pop(); // Remove o último token adicionado (número 34)
+            tokensComLinhas.pop(); // Remove o último item adicionado
+            break;
+          }
         }
 
         previousToken = TOKENS[j][0];
@@ -172,7 +197,7 @@ function compareWordsWithTokens(WORDS, TOKENS) {
       }
     }
 
-    if (!foundToken) {
+    if (!foundToken && !ignorarLinha && !ignorarBloco) {
       pilhaTokens.push(16);
       tokensComLinhas.push({
         token: 16,
@@ -182,9 +207,11 @@ function compareWordsWithTokens(WORDS, TOKENS) {
       previousToken = 16;
     }
   }
-  console.log(pilhaTokens);
+
+  console.log("Pilha gerada: ",pilhaTokens);
   return tokensComLinhas;
 }
+
 
 
 function displayFileContent(words) {
