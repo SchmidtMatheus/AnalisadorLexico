@@ -208,6 +208,7 @@ function compareWordsWithTokens(WORDS, TOKENS) {
   }
 
   console.log("Pilha gerada: ",pilhaTokens);
+  sintatico(pilhaTokens);
   return tokensComLinhas;
 }
 

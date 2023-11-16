@@ -1,5 +1,5 @@
 program funcao ;
-//aqui comeca o programa
+//aqui comeca o programa;
 
 numero = nint ;
 numeroo = nint ;
@@ -21,4 +21,3 @@ if numero > numeroo
 		print{'e menor'}
 
 end ;
-

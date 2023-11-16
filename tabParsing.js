@@ -4,6 +4,7 @@
             tabParsing[i] = new Array(43).fill(0);
         }
         const producoes = [
+            [0],
             [8,16,31,46,47,35],//P1
             [48,49,50],//P2
             [21,16,26,12,31,48],//P3
