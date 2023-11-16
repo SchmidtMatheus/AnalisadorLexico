@@ -1,0 +1,6 @@
+program testsintatico;
+var sTrin : integer;
+begin
+ // comentário de linha;
+ 
+end . 

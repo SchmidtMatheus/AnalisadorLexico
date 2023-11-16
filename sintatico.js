@@ -11,7 +11,7 @@ function sintatico(pilhaTokens){
     pilha = pilha.filter(item => item !== 0);
     
     let X = pilha[0];
-    let a = tokens[0];
+    let a = pilhaTokens[0];
     
     while (X !== 43) { // enquanto pilha não estiver vazia
         console.log("Produções",pilha);
@@ -25,11 +25,11 @@ function sintatico(pilhaTokens){
             if (X <= 44) { // topo da pilha é um terminal
                 if (X === a) { // deu match
                     pilha.shift();
-                    tokens.shift();
+                    pilhaTokens.shift();
                     X = pilha[0];
-                    console.log(tokens)
-                    if (tokens.length !== 0) {
-                        a = tokens[0];
+                    console.log(pilhaTokens)
+                    if (pilhaTokens.length !== 0) {
+                        a = pilhaTokens[0];
                     }
                 } else {
                     console.log('Error');
@@ -58,5 +58,5 @@ function sintatico(pilhaTokens){
     console.log('Pilha: ');
     console.log(pilha);
     console.log('Entrada: ');
-    console.log(tokens);
+    console.log(pilhaTokens);
 }

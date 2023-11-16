@@ -1,8 +1,8 @@
 program funcao ;
 //aqui comeca o programa;
 
-numero = nint ;
-numeroo = nint ;
+var numero : nint ;
+var numeroo : nint ;
 const numero = 10 ;
 const numeroo = 15 ;
 /*
@@ -20,4 +20,4 @@ if numero > numeroo
 	end else
 		print{'e menor'}
 
-end ;
+end .
