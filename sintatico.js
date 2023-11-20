@@ -4,7 +4,7 @@ function sintatico(pilhaTokens){
     // 8,16,31,21,16,26,12,31,21,16,26,12,31,2,16,33,14,31,9,16,39,16,33,14,38,31,22,10,40,13,41,31,18,31,22,16,39,12,38,31,18,35
     // 8,16,31,2,16,33,14,31,22,18,35
 
-    tokens = [8,16,31,21,16,26,12,31,21,16,26,12,31,2,16,33,14,31,9,16,39,16,33,14,38,31,22,10,40,13,41,31,18,31,22,18,35]
+    const tokens = [8,16,31,21,16,26,12,31,21,16,26,12,31,2,16,33,14,31,9,16,39,16,33,14,38,31,22,10,40,13,41,31,18,31,22,16,39,12,38,31,18,35]
     let pilha = [43]; // $ topo da pilha - gramatica
     
     pilha = producoes[1].concat(pilha);
@@ -36,20 +36,15 @@ function sintatico(pilhaTokens){
                     break;
                 }
             } else {
-                let topo = producoes[parseInt(tabParsing[X][a])].concat(pilha); // empilha as producoes correspondentes
-                
-                if (topo[0] === 44) { // se topo vazio X recebe o novo topo da pilha
-                    X = topo[0];
+                if (tabParsing[X][a]!== 0) { // se existe uma produção
+                    console.log('producao: ' + tabParsing[X][a]);
+                    pilha.shift();
+                    pilha = producoes[tabParsing[X][a]].concat(pilha);
+                    pilha = pilha.filter(item => item !== 0);
+                    X = pilha[0];
                 } else {
-                    if (topo[0] !== 44) { // se topo não vazio atualiza a pilha
-                        pilha.shift();
-                        pilha = producoes[parseInt(tabParsing[X][a])].concat(pilha);
-                        pilha = pilha.filter(item => item !== 0);
-                        X = pilha[0];
-                    } else {
-                        console.log('Translation not found');
-                        break;
-                    }
+                    console.log('Error: No Production');
+                    break;
                 }
             }
         }
