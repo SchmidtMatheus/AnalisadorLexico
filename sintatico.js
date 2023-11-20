@@ -32,7 +32,7 @@ function sintatico(pilhaTokens){
                         a = pilhaTokens[0];
                     }
                 } else {
-                    console.log('Error');
+                    console.log('Mismatch Error');
                     break;
                 }
             } else {
@@ -47,7 +47,7 @@ function sintatico(pilhaTokens){
                         pilha = pilha.filter(item => item !== 0);
                         X = pilha[0];
                     } else {
-                        console.log('Error');
+                        console.log('Translation not found');
                         break;
                     }
                 }

@@ -1,10 +1,8 @@
 program funcao ;
 //aqui comeca o programa;
 
-var numero : nint ;
-var numeroo : nint ;
-const numero = 10 ;
-const numeroo = 15 ;
+var numero : integer ;
+
 /*
 
 teste de bloco; vamos ver (mudar o manuallll)
@@ -13,11 +11,14 @@ teste de bloco; vamos ver (mudar o manuallll)
 <=
 :=
 /
-
-if numero > numeroo
+begin
+if numero > numeroo then
 	begin
 		print{'e maior'}
-	end else
+	end 
+	else
+	begin
 		print{'e menor'}
-
+	end
 end .
+
