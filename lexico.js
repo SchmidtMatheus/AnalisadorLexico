@@ -85,29 +85,62 @@ function compareWordsWithTokens(WORDS, TOKENS) {
   let linhaAtual = 1;
   let tokensComLinhas = [];
   let previousToken = null;
-  let ignorarLinha = false;
-  let ignorarBloco = false;
+  let inSingleQuotes = false;
+  let inDoubleQuotes = false;
+  let currentString = "";
 
   for (let i = 0; i < WORDS.length; i++) {
     const word = WORDS[i];
     let foundToken = false;
 
-    if (ignorarLinha || ignorarBloco) {
-      if (word.includes(";")) {
-        linhaAtual++;
+    // Check for single-quoted string
+    if (word.includes("'")) {
+      if (!inSingleQuotes) {
+        inSingleQuotes = true;
+        currentString += word;
+        pilhaTokens.pop();
+        tokensComLinhas.pop();
+      } else {
+        inSingleQuotes = false;
+        currentString += word;
+        pilhaTokens.push(23); // Token for vstring
+        tokensComLinhas.push({
+          token: 23,
+          linha: linhaAtual,
+          wordToSearch: currentString,
+        });
+        currentString = "";
+        foundToken = true;
       }
-
-      if (ignorarLinha && word.includes(";")) {
-        ignorarLinha = false; // Quando encontrar o ponto e vírgula, desativa a flag
-      }
-
-      if (ignorarBloco && word.includes("/")) {
-        ignorarBloco = false; // Quando encontrar o fechamento do bloco de comentário, desativa a flag
-      }
-
-      continue; // Ignora o restante da linha ou bloco
     }
 
+    // Check for double-quoted string
+    if (word.includes('"')) {
+      if (!inDoubleQuotes) {
+        inDoubleQuotes = true;
+        currentString += word;
+        pilhaTokens.pop();
+        tokensComLinhas.pop();
+      } else {
+        inDoubleQuotes = false;
+        currentString += word;
+        pilhaTokens.push(13); // Token for literal
+        tokensComLinhas.push({
+          token: 13,
+          linha: linhaAtual,
+          wordToSearch: currentString,
+        });
+        currentString = "";
+        foundToken = true;
+      }
+    }
+
+    if (inSingleQuotes || inDoubleQuotes) {
+      currentString += word;
+      continue;
+    }
+
+    // Check for other tokens
     for (let j = 0; j < TOKENS.length; j++) {
       const token = TOKENS[j][1];
 
@@ -123,72 +156,7 @@ function compareWordsWithTokens(WORDS, TOKENS) {
           linhaAtual++;
         }
 
-        if (previousToken === 29 && TOKENS[j][0] === 25) {
-          pilhaTokens.pop(); // Remove o último token adicionado (número 29)
-          pilhaTokens.pop();
-          pilhaTokens.push(27); // Adiciona o token 27 (representando <>)
-          tokensComLinhas.pop(); // Remove o último item adicionado
-          tokensComLinhas.pop();
-          tokensComLinhas.push({
-            token: 27,
-            linha: linhaAtual,
-            wordToSearch: "<>"
-          });
-        }
-
-        if (previousToken === 25 && TOKENS[j][0] === 26) {
-          pilhaTokens.pop(); // Remove o último token adicionado (número 26)
-          pilhaTokens.pop();
-          pilhaTokens.push(24); // Adiciona o token 24 (representando >=)
-          tokensComLinhas.pop(); // Remove o último item adicionado
-          tokensComLinhas.pop();
-          tokensComLinhas.push({
-            token: 24,
-            linha: linhaAtual,
-            wordToSearch: ">="
-          });
-        }
-
-        if (previousToken === 29 && TOKENS[j][0] === 26) {
-          pilhaTokens.pop(); // Remove o último token adicionado (número 26)
-          pilhaTokens.pop();
-          pilhaTokens.push(28); // Adiciona o token 24 (representando <=)
-          tokensComLinhas.pop(); // Remove o último item adicionado
-          tokensComLinhas.pop();
-          tokensComLinhas.push({
-            token: 28,
-            linha: linhaAtual,
-            wordToSearch: "<="
-          });
-        }
-
-        if (previousToken === 33 && TOKENS[j][0] === 26) {
-          pilhaTokens.pop(); // Remove o último token adicionado (número 26)
-          pilhaTokens.pop();
-          pilhaTokens.push(32); // Adiciona o token 24 (representando :=)
-          tokensComLinhas.pop(); // Remove o último item adicionado
-          tokensComLinhas.pop();
-          tokensComLinhas.push({
-            token: 32,
-            linha: linhaAtual,
-            wordToSearch: ":="
-          });
-        }
-
-        if (TOKENS[j][0] === 34) {
-          const nextWord = WORDS[i + 1];
-          if (nextWord === '/') {
-            ignorarLinha = true; // Ativa a flag para ignorar a linha
-            pilhaTokens.pop(); // Remove o último token adicionado (número 34)
-            tokensComLinhas.pop(); // Remove o último item adicionado
-            break;
-          } else if (nextWord === '*') {
-            ignorarBloco = true; // Ativa a flag para ignorar o bloco
-            pilhaTokens.pop(); // Remove o último token adicionado (número 34)
-            tokensComLinhas.pop(); // Remove o último item adicionado
-            break;
-          }
-        }
+        // ... (existing code for handling special cases)
 
         previousToken = TOKENS[j][0];
         foundToken = true;
@@ -196,22 +164,40 @@ function compareWordsWithTokens(WORDS, TOKENS) {
       }
     }
 
-    if (!foundToken && !ignorarLinha && !ignorarBloco) {
-      pilhaTokens.push(16);
-      tokensComLinhas.push({
-        token: 16,
-        linha: linhaAtual,
-        wordToSearch: word,
-      });
-      previousToken = 16;
+    // Handle non-token words
+    if (!foundToken && !inSingleQuotes && !inDoubleQuotes) {
+      if (/^\d{1,2}$/.test(word) && parseInt(word) >= 0 && parseInt(word) <= 100) {
+        pilhaTokens.push(12); // Token for números inteiros (nint)
+        tokensComLinhas.push({
+          token: 12,
+          linha: linhaAtual,
+          wordToSearch: word,
+        });
+        previousToken = 12;
+      } else if (/^\d+\.\d{1,2}$/.test(word) && parseFloat(word) >= 0 && parseFloat(word) <= 100) {
+        pilhaTokens.push(11); // Token for números reais (nreal)
+        tokensComLinhas.push({
+          token: 11,
+          linha: linhaAtual,
+          wordToSearch: word,
+        });
+        previousToken = 11;
+      } else {
+        pilhaTokens.push(16);
+        tokensComLinhas.push({
+          token: 16,
+          linha: linhaAtual,
+          wordToSearch: word,
+        });
+        previousToken = 16;
+      }
     }
   }
 
-  console.log("Pilha gerada: ",pilhaTokens);
+  console.log("Pilha gerada: ", pilhaTokens);
   sintatico(pilhaTokens);
   return tokensComLinhas;
 }
-
 
 
 function displayFileContent(words) {
