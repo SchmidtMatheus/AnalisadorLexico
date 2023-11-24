@@ -21,4 +21,3 @@ if numero > numeroo then
 		print{'e menor'}
 	end
 end .
-
