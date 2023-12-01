@@ -242,7 +242,6 @@ function compareWordsWithTokens(WORDS, TOKENS) {
           wordToSearch: currentString,
         });
         currentString = "";
-        foundToken = true;
       }
     }
 
@@ -263,13 +262,11 @@ function compareWordsWithTokens(WORDS, TOKENS) {
           wordToSearch: currentString,
         });
         currentString = "";
-        foundToken = true;
       }
     }
 
     if (inSingleQuotes || inDoubleQuotes) {
       currentString += word;
-      continue;
     }
   }
   

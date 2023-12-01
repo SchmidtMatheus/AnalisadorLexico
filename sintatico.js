@@ -12,6 +12,13 @@ function sintatico(pilhaTokens){
     
     let X = pilha[0];
     let a = pilhaTokens[0];
+    let nivel = 0;
+    let varZone = false;
+    let procedureZone = false;
+    let constZone = false;
+    let cont = 1;
+    let tokensIdents = {}
+    let analiseSemantica = new AnaliseSemantica();
     
     while (X !== 43) { // enquanto pilha não estiver vazia
         console.log("Produções",pilha);
@@ -24,6 +31,50 @@ function sintatico(pilhaTokens){
         } else {
             if (X <= 44) { // topo da pilha é um terminal
                 if (X === a) { // deu match
+
+            if (a === 2) {
+                varZone = true; 
+            }
+            if (varZone && (a === 22 || a === 9)) {
+                varZone = false;
+            }
+
+            if (a === 9) {
+                procedureZone = true;
+                nivel = 1; 
+            }
+
+            if (procedureZone && a === 39) {
+                procedureZone = false;
+            }
+
+            if (a === 21) {
+                constZone = true;
+            }
+
+            if (constZone && a === 31) {
+                constZone = false;
+            }
+
+            if (varZone && a === 16) {
+                const nomeIdent = tokensIdents[cont];
+                let categoria = '';
+
+                if (constZone) {
+                    categoria = 'constante';
+                } else if (procedureZone) {
+                    categoria = 'procedure';
+                } else if (varZone) {
+                    categoria = 'variavel';
+                }
+
+                analiseSemantica.adicionarSimbolo(nomeIdent, categoria, '', nivel);
+                cont += 1;
+                analiseSemantica.visualizarTabela();
+                analiseSemantica.verificarTiposOperacaoMatematica();
+                
+            }
+
                     pilha.shift();
                     pilhaTokens.shift();
                     X = pilha[0];
