@@ -1,0 +1,34 @@
+Regra 1:
+A variável utilizada no código precisa ter sido declarada na tabela de simbolos.
+
+Regra 2:
+As variaveis declaradas no campo Var precisam ser declaradas (inseridas na tabela de
+símbolos)
+
+Regra 3:
+Se em operações matemáticas, ao receber uma variável, seguido do operador matemático,
+seguido de outra variável, as duas variaveis precisam ser do mesmo tipo (int ou real)
+16 30 16
+16 34 16
+Os tokens 16 precisam ser do mesmo tipo (int com int ou real com real)
+16 37 16
+16 42 16
+
+Regra 4:
+Se em operações de comparação, ao receber uma variável, seguido do operador de
+comparação, seguido de outra variável, as cuas variáveis precisam ser do mesmo tipo (int ou real)
+16 24 16
+16 25 16
+16 27 16
+Os tokens 16 precisam ser do mesmo tipo (int com int ou real com real)
+16 28 16
+16 29 16
+
+Regra 5:
+Se em operações matemáticas, ao receber uma variável, seguido do operador matemático,
+seguido de outra variável, as duas varláveis não podem ser do tipo string
+16 30 16
+16 34 16
+Os tokens 16 precisam ser diferente de string
+16 37 16
+16 42 16
