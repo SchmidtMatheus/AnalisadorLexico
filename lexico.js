@@ -85,11 +85,13 @@ function compareWordsWithTokens(WORDS, TOKENS) {
   let linhaAtual = 1;
   let tokensComLinhas = [];
   let previousToken = null;
+  let prepreviousToken = null;
   let ignorarLinha = false;
   let ignorarBloco = false;
   let inSingleQuotes = false;
   let inDoubleQuotes = false;
   let currentString = "";
+  let analiseSemantica = new AnaliseSemantica();
 
   for (let i = 0; i < WORDS.length; i++) {
     const word = WORDS[i];
@@ -112,7 +114,10 @@ function compareWordsWithTokens(WORDS, TOKENS) {
     }
 
     for (let j = 0; j < TOKENS.length; j++) {
+
       const token = TOKENS[j][1];
+
+
 
       if (word === token) {
         pilhaTokens.push(TOKENS[j][0]);
@@ -191,8 +196,7 @@ function compareWordsWithTokens(WORDS, TOKENS) {
             tokensComLinhas.pop(); // Remove o último item adicionado
             break;
           }
-        }
-
+        } 
         previousToken = TOKENS[j][0];
         foundToken = true;
         break;
@@ -225,6 +229,7 @@ function compareWordsWithTokens(WORDS, TOKENS) {
         });
         previousToken = 16;
       }
+
     }
     if (word.includes("'")) {
       if (!inSingleQuotes) {
@@ -269,14 +274,44 @@ function compareWordsWithTokens(WORDS, TOKENS) {
       currentString += word;
     }
   }
-  
 
+  for (let k = 0; k < pilhaTokens.length; k++) {
+
+    if (prepreviousToken === 16) {
+      if (pilhaTokens[k] === 14) {
+        analiseSemantica.adicionarSimbolo(tokensComLinhas[k - 2].wordToSearch, "var", "integer", 0);
+      }
+      if (pilhaTokens[k] === 6) {
+        analiseSemantica.adicionarSimbolo(tokensComLinhas[k - 2].wordToSearch, "var", "real", 0);
+      }
+      if (pilhaTokens[k] === 5) {
+        analiseSemantica.adicionarSimbolo(tokensComLinhas[k - 2].wordToSearch, "var", "string", 0);
+      }
+    }
+
+    if (previousToken === 8 && pilhaTokens[k] === 16) {
+      analiseSemantica.adicionarSimbolo(tokensComLinhas[k].wordToSearch, "procedure", "string", 0);
+    }
+    if(prepreviousToken == 16 && pilhaTokens[k] == 16){
+      if(previousToken == 30 || previousToken == 34 || previousToken == 37 || previousToken == 42 || previousToken == 24 || previousToken == 25 || previousToken == 27 || previousToken == 28 || previousToken == 29){
+
+           analiseSemantica.verificarTiposOperacaoMatematica(
+           tokensComLinhas[k - 1].wordToSearch,
+           analiseSemantica.obterTipoVariavel(tokensComLinhas[k].wordToSearch),
+           analiseSemantica.obterTipoVariavel(tokensComLinhas[k-2].wordToSearch)
+          );
+      }
+    }
+
+    prepreviousToken = previousToken;
+    previousToken = pilhaTokens[k];
+  }
+  
   console.log("Pilha gerada: ",pilhaTokens);
   sintatico(pilhaTokens);
+  analiseSemantica.visualizarTabela();
   return tokensComLinhas;
 }
-
-
 
 function displayFileContent(words) {
   const fileContentElement = document.getElementById("file-content");
@@ -287,7 +322,6 @@ function displayFileContent(words) {
 function displayTokens(tokens) {
   const tokensDiv = document.getElementById("tokens");
   tokensDiv.innerHTML = '';
-
 
   tokens.forEach(item => {
     const listItem = document.createElement('p');

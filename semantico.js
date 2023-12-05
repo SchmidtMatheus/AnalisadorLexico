@@ -12,13 +12,6 @@ class AnaliseSemantica {
         }
     }
 
-    buscaSimbolo(nome, categoria, tipo, nivel) {
-        if (nome in this.tabelaSimbolos && this.tabelaSimbolos[nome]['Nivel'] === nivel) {
-            return true;
-        }
-        return false;
-    }
-
     // Faz a remoção de um símbolo pelo seu nome.
     removerSimbolo(nome) {
         if (nome in this.tabelaSimbolos) {
@@ -52,6 +45,15 @@ class AnaliseSemantica {
         }
         if(tipo1 == "string"|| tipo2 == "string"){
             console.log(`Erro semântico: String é incompátivel para a operação '${operador}'.`);
+        }
+    }
+    
+    obterTipoVariavel(nome) {
+        if (nome in this.tabelaSimbolos) {
+            return this.tabelaSimbolos[nome]['Tipo'];
+        } else {
+            console.log(`Variável '${nome}' não encontrada na tabela de símbolos.`);
+            return null; // Ou lança uma exceção, dependendo da lógica do seu programa
         }
     }
 }

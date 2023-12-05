@@ -1,6 +1,16 @@
 program testsintatico;
-var sTrin : integer;
+var numero1 : integer;
+numero2 : real;
+
 begin
+
+if numero1 > numero2 then
+	begin
+	    print{vstring};
+	end
+	else begin
+	    print{vstring};
+	end;
  // comentário de linha;
  
 end . 

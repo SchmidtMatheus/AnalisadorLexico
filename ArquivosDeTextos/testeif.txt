@@ -2,6 +2,7 @@ program funcao ;
 //aqui comeca o programa;
 
 var numero : integer ;
+var numeroo : real ;
 
 /*
 
