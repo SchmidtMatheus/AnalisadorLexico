@@ -306,10 +306,9 @@ function compareWordsWithTokens(WORDS, TOKENS) {
     prepreviousToken = previousToken;
     previousToken = pilhaTokens[k];
   }
-  
+  analiseSemantica.visualizarTabela();
   console.log("Pilha gerada: ",pilhaTokens);
   sintatico(pilhaTokens);
-  analiseSemantica.visualizarTabela();
   return tokensComLinhas;
 }
 

@@ -1,6 +1,6 @@
 program testsintatico;
-var numero1 : integer;
-numero2 : real;
+var numero1 : string;
+const numero2 : integer;
 
 begin
 

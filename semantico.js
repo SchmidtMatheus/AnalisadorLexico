@@ -53,7 +53,7 @@ class AnaliseSemantica {
             return this.tabelaSimbolos[nome]['Tipo'];
         } else {
             console.log(`Variável '${nome}' não encontrada na tabela de símbolos.`);
-            return null; // Ou lança uma exceção, dependendo da lógica do seu programa
+            return null;
         }
     }
 }
